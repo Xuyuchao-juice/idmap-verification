@@ -1,0 +1,52 @@
+# Negative control: same volume without the idmap mount option; the user-namespace Pod must fail to start.
+# Depends on jfs-idmap-secret from static-pv.yaml.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jfs-plain-pv
+spec:
+  accessModes: ["ReadWriteMany"]
+  capacity:
+    storage: 10Gi
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: juicefs-plain
+  csi:
+    driver: csi.juicefs.com
+    volumeHandle: jfs-plain-pv
+    fsType: juicefs
+    nodePublishSecretRef:
+      name: jfs-idmap-secret
+      namespace: default
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jfs-plain-pvc
+  namespace: default
+spec:
+  accessModes: ["ReadWriteMany"]
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: jfs-plain-pv
+  storageClassName: juicefs-plain
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jfs-userns-plain
+  namespace: default
+spec:
+  hostUsers: false
+  terminationGracePeriodSeconds: 5
+  containers:
+  - name: app
+    image: ubuntu:24.04
+    command: ["/bin/sh", "-c", "ls -ln /data && sleep infinity"]
+    volumeMounts:
+    - name: data
+      mountPath: /data
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: jfs-plain-pvc

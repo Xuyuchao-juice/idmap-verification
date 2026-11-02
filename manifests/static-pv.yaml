@@ -5,7 +5,10 @@ metadata:
   namespace: default
 type: kubernetes.io/opaque
 stringData:
+  name: vol1
   metaurl: "172.30.117.100:9431/vol1"
+  # read by the patched CSI driver to skip the `juicefs config` probe
+  uuid: vol1-uuid
 ---
 apiVersion: v1
 kind: PersistentVolume

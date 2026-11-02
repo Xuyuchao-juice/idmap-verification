@@ -29,7 +29,7 @@ kubectl delete pod jfs-app jfs-idmap-view --force --grace-period=0 2>/dev/null
 kubectl -n kube-system delete pod -l app.kubernetes.io/name=juicefs-mount --force --grace-period=0 2>/dev/null
 kubectl apply -f manifests/static-pv.yaml >/dev/null 2>&1
 sleep 45
-MPOD=$(kubectl -n kube-system get pods -o custom-columns=N:.metadata.name --no-headers | grep juicefs-iz | grep -v csi | head -1)
+MPOD=$(kubectl -n kube-system get pods -l app.kubernetes.io/name=juicefs-mount -o custom-columns=N:.metadata.name --no-headers | grep jfs-idmap-pv | head -1)
 echo "mount pod: $MPOD"
 if [ -n "$MPOD" ]; then
     kubectl -n kube-system logs "$MPOD" 2>/dev/null | grep -q "FUSE_ALLOW_IDMAP negotiated"
