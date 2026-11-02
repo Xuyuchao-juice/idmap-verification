@@ -1,0 +1,3 @@
+bin/jfs
+bin/k3s
+image/juicefs-csi-driver
