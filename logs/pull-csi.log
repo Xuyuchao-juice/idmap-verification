@@ -1,0 +1,21 @@
+v0.33.2: Pulling from juicedata/juicefs-csi-driver
+12593af8cbd2: Pulling fs layer
+e4b76a7ccd02: Pulling fs layer
+056233743e4d: Pulling fs layer
+3ec3185c37fa: Pulling fs layer
+44656a4a05d0: Pulling fs layer
+8a628cdd7ccc: Pulling fs layer
+5c41b96c08b3: Pulling fs layer
+2a24d7d06eb6: Pulling fs layer
+1a2929da74e6: Pulling fs layer
+97e7d544f110: Pulling fs layer
+72d610495d87: Pulling fs layer
+535376b75c84: Pulling fs layer
+eb2f8229d375: Pulling fs layer
+a1e7894f699b: Pulling fs layer
+Digest: sha256:5af0654d7b51432ab571e95121d9b2586cfa237772ead209496af80ba29a4df5
+Status: Downloaded newer image for docker.m.daocloud.io/juicedata/juicefs-csi-driver:v0.33.2
+docker.m.daocloud.io/juicedata/juicefs-csi-driver:v0.33.2
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+docker.m.daocloud.io/juicedata/juicefs-csi-driver:v0.33.2   5af0654d7b51       1.19GB          343MB        
+juicedata/juicefs-csi-driver:v0.33.2                        5af0654d7b51       1.19GB          343MB        

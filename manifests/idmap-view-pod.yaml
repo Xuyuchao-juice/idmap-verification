@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jfs-idmap-view
+spec:
+  terminationGracePeriodSeconds: 5
+  containers:
+  - name: test
+    image: ubuntu:24.04
+    securityContext:
+      privileged: true
+    command:
+    - /bin/sh
+    - -c
+    - |
+      mkdir -p /mnt/orig /mnt/idmap
+      mount --bind /data /mnt/orig
+      # idmap: pod(uid N) <-> fs-uid N+100000 ; uid 100000 in-pod == fs-uid 0
+      if /host-bin/idmap_mount /data /mnt/idmap 0:100000:65536; then
+        echo "=== MAP_OK: idmapped bind mount created ==="
+        setpriv --reuid 100000 --regid 100000 --clear-groups \
+          sh -c 'echo from-idmap-view > /mnt/idmap/view-100000.txt'
+        echo "--- /mnt/idmap (idmapped view; expect view-100000.txt uid 100000) ---"
+        ls -ln /mnt/idmap
+        echo "--- /mnt/orig  (original view; expect view-100000.txt uid 0) ---"
+        ls -ln /mnt/orig
+        grep -q "^100000 100000" /proc/self/uid_map && echo "unexpected"
+      else
+        echo "=== MAP_FAIL ==="
+        umount /mnt/orig 2>/dev/null || true
+      fi
+      sleep infinity
+    volumeMounts:
+    - name: data
+      mountPath: /data
+    - name: hostbin
+      mountPath: /host-bin
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: jfs-idmap-pvc
+  - name: hostbin
+    hostPath:
+      path: /root/code/idmap/verification/bin
+      type: Directory

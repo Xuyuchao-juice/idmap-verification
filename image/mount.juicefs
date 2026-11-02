@@ -1,0 +1,40 @@
+#!/bin/sh
+# CE-style mount wrapper around the EE-style jfs binary.
+# Usage: mount.juicefs <host:port[/vol]> <mountpoint> [-o opt1,opt2,...]
+set -eu
+ADDR="$1"; MP="$2"; shift 2
+HOSTPORT="${ADDR%%/*}"
+VOL="${ADDR#*/}"; [ "$VOL" = "$ADDR" ] && VOL="vol1"
+mkdir -p /root/.jfs-conf "/var/lib/jfs/$VOL" /var/jfsCache
+cat > "/root/.jfs-conf/$VOL.conf" <<EOF
+{
+  "rootname": "$VOL",
+  "storage": "file",
+  "bucket": "/var/lib/jfs/$VOL/",
+  "blockSize": 4096,
+  "master": "$HOSTPORT",
+  "master_ip": ["${HOSTPORT%%:*}"],
+  "compress": "none",
+  "tested": 1,
+  "partitions": 0,
+  "replicated": false,
+  "compatible": false
+}
+EOF
+# translate "-o a,b=c" into "--a --b=c"; drop options the jfs CLI doesn't have
+CLI_OPTS=""
+PREV=""
+for arg in "$@"; do
+  if [ "$PREV" = "-o" ]; then
+    OLDIFS="$IFS"; IFS=","
+    for o in $arg; do
+      case "$o" in
+        ""|metrics=*) continue ;;
+      esac
+      CLI_OPTS="$CLI_OPTS --$o"
+    done
+    IFS="$OLDIFS"
+  fi
+  PREV="$arg"
+done
+exec /usr/local/bin/juicefs mount --conf-dir /root/.jfs-conf "$VOL" "$MP" --foreground --no-syslog $CLI_OPTS

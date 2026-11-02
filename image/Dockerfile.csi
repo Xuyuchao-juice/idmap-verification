@@ -1,0 +1,2 @@
+FROM juicedata/juicefs-csi-driver:v0.33.2
+COPY juicefs-csi-driver /usr/local/bin/juicefs-csi-driver

@@ -1,0 +1,16 @@
+v0.33.2: Pulling from juicedata/csi-dashboard
+d934c866d88a: Pulling fs layer
+63e7e49699e8: Pulling fs layer
+46d701c6ea7a: Pulling fs layer
+44136fa355b3: Already exists
+2040ee765ae7: Download complete
+46d701c6ea7a: Download complete
+d934c866d88a: Download complete
+63e7e49699e8: Download complete
+63e7e49699e8: Pull complete
+46d701c6ea7a: Pull complete
+d934c866d88a: Pull complete
+Digest: sha256:1ab4b7110922df5e187e790d44fe62dafab2f4dd82efd84305685214b44a079c
+Status: Downloaded newer image for docker.m.daocloud.io/juicedata/csi-dashboard:v0.33.2
+docker.m.daocloud.io/juicedata/csi-dashboard:v0.33.2
+unpacking docker.io/juicedata/csi-dashboard:v0.33.2 (sha256:1ab4b7110922df5e187e790d44fe62dafab2f4dd82efd84305685214b44a079c)...done

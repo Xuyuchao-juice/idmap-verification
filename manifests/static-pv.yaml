@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jfs-idmap-secret
+  namespace: default
+type: kubernetes.io/opaque
+stringData:
+  metaurl: "172.30.117.100:9431/vol1"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jfs-idmap-pv
+spec:
+  accessModes: ["ReadWriteMany"]
+  capacity:
+    storage: 10Gi
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: juicefs-idmap
+  mountOptions:
+    - idmap
+  csi:
+    driver: csi.juicefs.com
+    volumeHandle: jfs-idmap-pv
+    fsType: juicefs
+    nodePublishSecretRef:
+      name: jfs-idmap-secret
+      namespace: default
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jfs-idmap-pvc
+  namespace: default
+spec:
+  accessModes: ["ReadWriteMany"]
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: jfs-idmap-pv
+  storageClassName: juicefs-idmap
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jfs-app
+  namespace: default
+spec:
+  terminationGracePeriodSeconds: 5
+  containers:
+  - name: app
+    image: ubuntu:24.04
+    command: ["/bin/sh","-c","echo idmap-csi-smoke > /data/$(hostname).txt && ls -ln /data/ && sleep infinity"]
+    volumeMounts:
+    - name: data
+      mountPath: /data
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: jfs-idmap-pvc
